@@ -1,0 +1,12 @@
+.env
+.env.*
+node_modules/
+dist/
+coverage/
+logs/
+*.log
+*.local
+.DS_Store
+.vscode/
+.claude/
+/package-lock.json
