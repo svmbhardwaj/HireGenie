@@ -1,6 +1,9 @@
 const { Router } = require('express')
 const authController = require("../controllers/auth.controller")
 const authMiddleware = require("../middlewares/auth.middleware")
+const validate = require("../middlewares/validate.middleware")
+const { registerSchema, loginSchema } = require("../validators/auth.validator")
+const { authLimiter } = require("../middlewares/rateLimit.middleware")
 
 const authRouter = Router()
 
@@ -9,7 +12,7 @@ const authRouter = Router()
  * @description Register a new user
  * @access Public
  */
-authRouter.post("/register", authController.registerUserController)
+authRouter.post("/register", authLimiter, validate(registerSchema), authController.registerUserController)
 
 
 /**
@@ -17,12 +20,20 @@ authRouter.post("/register", authController.registerUserController)
  * @description login user with email and password
  * @access Public
  */
-authRouter.post("/login", authController.loginUserController)
+authRouter.post("/login", authLimiter, validate(loginSchema), authController.loginUserController)
+
+
+/**
+ * @route POST /api/auth/refresh
+ * @description exchange a valid refresh token for a fresh access + refresh token pair
+ * @access Public (requires refresh cookie)
+ */
+authRouter.post("/refresh", authLimiter, authController.refreshTokenController)
 
 
 /**
  * @route GET /api/auth/logout
- * @description clear token from user cookie and add the token in blacklist
+ * @description clear tokens from user cookies and add them in blacklist
  * @access public
  */
 authRouter.get("/logout", authController.logoutUserController)

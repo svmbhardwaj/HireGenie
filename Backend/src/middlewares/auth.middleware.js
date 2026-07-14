@@ -1,43 +1,39 @@
 const jwt = require("jsonwebtoken")
 const tokenBlacklistModel = require("../models/blacklist.model")
+const catchAsync = require("../utils/catchAsync")
+const AppError = require("../utils/AppError")
 
 
-
+/**
+ * @name authUser
+ * @description Authenticate a request using the http-only access token cookie.
+ * Rejects missing, blacklisted, or invalid tokens and attaches the decoded user to req.
+ */
 async function authUser(req, res, next) {
 
     const token = req.cookies.token
 
     if (!token) {
-        return res.status(401).json({
-            message: "Token not provided."
-        })
+        throw new AppError(401, "Token not provided.")
     }
 
-    const isTokenBlacklisted = await tokenBlacklistModel.findOne({
-        token
-    })
+    const isTokenBlacklisted = await tokenBlacklistModel.findOne({ token })
 
     if (isTokenBlacklisted) {
-        return res.status(401).json({
-            message: "token is invalid"
-        })
+        throw new AppError(401, "Token is invalid.")
     }
 
+    let decoded
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET)
-
-        req.user = decoded
-
-        next()
-
+        decoded = jwt.verify(token, process.env.JWT_SECRET)
     } catch (err) {
-
-        return res.status(401).json({
-            message: "Invalid token."
-        })
+        throw new AppError(401, "Invalid token.")
     }
 
+    req.user = decoded
+
+    next()
 }
 
 
-module.exports = { authUser }
+module.exports = { authUser: catchAsync(authUser) }

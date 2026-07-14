@@ -2,6 +2,26 @@ const userModel = require("../models/user.model")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const tokenBlacklistModel = require("../models/blacklist.model")
+const catchAsync = require("../utils/catchAsync")
+const AppError = require("../utils/AppError")
+const { signAccessToken, signRefreshToken, setAuthCookies, clearAuthCookies } = require("../utils/token")
+
+
+/*
+ * Blacklist a token until its own natural expiry so the TTL index can reap it.
+ * Falls back to a short window if the token can't be decoded.
+ */
+async function blacklistToken(token) {
+    let expiresAt = new Date(Date.now() + 15 * 60 * 1000)
+
+    const decoded = jwt.decode(token)
+    if (decoded && decoded.exp) {
+        expiresAt = new Date(decoded.exp * 1000)
+    }
+
+    await tokenBlacklistModel.create({ token, expiresAt })
+}
+
 
 /**
  * @name registerUserController
@@ -12,20 +32,12 @@ async function registerUserController(req, res) {
 
     const { username, email, password } = req.body
 
-    if (!username || !email || !password) {
-        return res.status(400).json({
-            message: "Please provide username, email and password"
-        })
-    }
-
     const isUserAlreadyExists = await userModel.findOne({
         $or: [ { username }, { email } ]
     })
 
     if (isUserAlreadyExists) {
-        return res.status(400).json({
-            message: "Account already exists with this email address or username"
-        })
+        throw new AppError(409, "Account already exists with this email address or username")
     }
 
     const hash = await bcrypt.hash(password, 10)
@@ -36,14 +48,10 @@ async function registerUserController(req, res) {
         password: hash
     })
 
-    const token = jwt.sign(
-        { id: user._id, username: user.username },
-        process.env.JWT_SECRET,
-        { expiresIn: "1d" }
-    )
-
-    res.cookie("token", token)
-
+    setAuthCookies(res, {
+        accessToken: signAccessToken(user),
+        refreshToken: signRefreshToken(user)
+    })
 
     res.status(201).json({
         message: "User registered successfully",
@@ -69,26 +77,20 @@ async function loginUserController(req, res) {
     const user = await userModel.findOne({ email })
 
     if (!user) {
-        return res.status(400).json({
-            message: "Invalid email or password"
-        })
+        throw new AppError(400, "Invalid email or password")
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password)
 
     if (!isPasswordValid) {
-        return res.status(400).json({
-            message: "Invalid email or password"
-        })
+        throw new AppError(400, "Invalid email or password")
     }
 
-    const token = jwt.sign(
-        { id: user._id, username: user.username },
-        process.env.JWT_SECRET,
-        { expiresIn: "1d" }
-    )
+    setAuthCookies(res, {
+        accessToken: signAccessToken(user),
+        refreshToken: signRefreshToken(user)
+    })
 
-    res.cookie("token", token)
     res.status(200).json({
         message: "User loggedIn successfully.",
         user: {
@@ -101,23 +103,76 @@ async function loginUserController(req, res) {
 
 
 /**
+ * @name refreshTokenController
+ * @description exchange a valid refresh token cookie for a fresh access + refresh token pair
+ * @access Public (requires a valid refresh cookie)
+ */
+async function refreshTokenController(req, res) {
+
+    const refreshToken = req.cookies.refreshToken
+
+    if (!refreshToken) {
+        throw new AppError(401, "Refresh token not provided.")
+    }
+
+    const isBlacklisted = await tokenBlacklistModel.findOne({ token: refreshToken })
+
+    if (isBlacklisted) {
+        throw new AppError(401, "Refresh token is invalid.")
+    }
+
+    let decoded
+    try {
+        decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET)
+    } catch (err) {
+        throw new AppError(401, "Invalid refresh token.")
+    }
+
+    const user = await userModel.findById(decoded.id)
+
+    if (!user) {
+        throw new AppError(401, "User no longer exists.")
+    }
+
+    // Rotate: invalidate the used refresh token, then issue a new pair
+    await blacklistToken(refreshToken)
+
+    setAuthCookies(res, {
+        accessToken: signAccessToken(user),
+        refreshToken: signRefreshToken(user)
+    })
+
+    res.status(200).json({
+        message: "Token refreshed successfully."
+    })
+}
+
+
+/**
  * @name logoutUserController
- * @description clear token from user cookie and add the token in blacklist
+ * @description clear tokens from user cookies and add them in the blacklist
  * @access public
  */
 async function logoutUserController(req, res) {
+
     const token = req.cookies.token
+    const refreshToken = req.cookies.refreshToken
 
     if (token) {
-        await tokenBlacklistModel.create({ token })
+        await blacklistToken(token)
     }
 
-    res.clearCookie("token")
+    if (refreshToken) {
+        await blacklistToken(refreshToken)
+    }
+
+    clearAuthCookies(res)
 
     res.status(200).json({
         message: "User logged out successfully"
     })
 }
+
 
 /**
  * @name getMeController
@@ -128,7 +183,9 @@ async function getMeController(req, res) {
 
     const user = await userModel.findById(req.user.id)
 
-
+    if (!user) {
+        throw new AppError(404, "User not found.")
+    }
 
     res.status(200).json({
         message: "User details fetched successfully",
@@ -142,10 +199,10 @@ async function getMeController(req, res) {
 }
 
 
-
 module.exports = {
-    registerUserController,
-    loginUserController,
-    logoutUserController,
-    getMeController
+    registerUserController: catchAsync(registerUserController),
+    loginUserController: catchAsync(loginUserController),
+    refreshTokenController: catchAsync(refreshTokenController),
+    logoutUserController: catchAsync(logoutUserController),
+    getMeController: catchAsync(getMeController)
 }
