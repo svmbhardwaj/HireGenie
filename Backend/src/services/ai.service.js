@@ -58,7 +58,10 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
 
 
 async function generatePdfFromHtml(htmlContent) {
-    const browser = await puppeteer.launch()
+    const browser = await puppeteer.launch({
+        // required when running inside docker as root
+        args: [ "--no-sandbox", "--disable-setuid-sandbox" ]
+    })
     const page = await browser.newPage();
     await page.setContent(htmlContent, { waitUntil: "networkidle0" })
 
@@ -113,4 +116,26 @@ async function generateResumePdf({ resume, selfDescription, jobDescription }) {
 
 }
 
-module.exports = { generateInterviewReport, generateResumePdf }
+
+async function generateMockReply({ systemPrompt, messages }) {
+
+    const contents = messages.map(function (message) {
+        return {
+            role: message.role,
+            parts: [ { text: message.content } ]
+        }
+    })
+
+    const response = await ai.models.generateContent({
+        model: "gemini-3-flash-preview",
+        contents,
+        config: {
+            systemInstruction: systemPrompt
+        }
+    })
+
+    return response.text
+
+}
+
+module.exports = { generateInterviewReport, generateResumePdf, generateMockReply }

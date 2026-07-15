@@ -1,0 +1,277 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Resume Analysis — Glassmorphism Design
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.resume-analysis {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 1100px;
+}
+
+.resume-analysis__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.resume-analysis__title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.resume-analysis__subtitle {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+/* ── Two-column layout ──────────────────────────────────────────────────── */
+.resume-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+/* Left Panel */
+.resume-panel {
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.resume-panel__header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--accent-violet);
+}
+
+.resume-panel__header h2 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  flex: 1;
+}
+
+/* Dropzone */
+.resume-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.resume-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2rem;
+  border: 2px dashed rgba(139, 92, 246, 0.3);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: center;
+}
+
+.resume-dropzone:hover {
+  border-color: var(--accent-violet);
+  background: rgba(139, 92, 246, 0.08);
+}
+
+.resume-dropzone__icon {
+  color: var(--accent-violet);
+  opacity: 0.7;
+}
+
+.resume-dropzone__title {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.resume-dropzone__sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* OR divider */
+.resume-or {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.resume-or::before,
+.resume-or::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--glass-border);
+}
+
+/* Fields */
+.resume-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
+}
+
+.resume-field__header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.resume-field__label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.resume-jd-textarea {
+  min-height: 140px;
+}
+
+.resume-char-count {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.resume-analyze-btn {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.9rem;
+  font-size: 0.95rem;
+}
+
+/* ── Right: Results ─────────────────────────────────────────────────────── */
+.resume-results {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Score gauge */
+.resume-score-card {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.resume-score-card__label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  align-self: flex-start;
+}
+
+.resume-score-gauge {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.resume-score-gauge__svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.resume-score-gauge__text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.resume-score-gauge__value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.resume-score-gauge__pct {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* Feedback panel */
+.resume-feedback {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.resume-feedback__section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.feedback-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  width: fit-content;
+  border-radius: 8px;
+}
+
+.feedback-tag--strength {
+  color: var(--severity-low);
+}
+
+.feedback-tag--weakness {
+  color: var(--severity-medium);
+}
+
+.feedback-tag--rec {
+  color: var(--accent-violet);
+}
+
+.resume-feedback__text {
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  padding-left: 0.25rem;
+}
+
+/* Action buttons */
+.resume-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.resume-actions .btn-glass {
+  flex: 1;
+  min-width: 100px;
+  font-size: 0.78rem;
+  padding: 0.6rem 0.8rem;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .resume-layout {
+    grid-template-columns: 1fr;
+  }
+}

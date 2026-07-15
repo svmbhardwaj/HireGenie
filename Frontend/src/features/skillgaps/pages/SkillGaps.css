@@ -1,0 +1,217 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Skill Gaps — Glassmorphism Design
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.skill-gaps-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 1100px;
+}
+
+.sg-header__title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.sg-header__subtitle {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-top: 0.2rem;
+  max-width: 520px;
+}
+
+/* ── Layout ─────────────────────────────────────────────────────────────── */
+.sg-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+/* ── Radar Chart ────────────────────────────────────────────────────────── */
+.sg-chart-card {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: sticky;
+  top: 2rem;
+}
+
+.sg-chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.sg-legend {
+  display: flex;
+  gap: 1.25rem;
+}
+
+.sg-legend__item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.sg-legend__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.sg-legend__dot--current {
+  background: var(--accent-gradient);
+}
+
+.sg-legend__dot--market {
+  background: linear-gradient(135deg, #f472b6, #fb7185);
+}
+
+.sg-radar-container {
+  width: 100%;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sg-radar-svg {
+  width: 100%;
+  height: 100%;
+  max-width: 400px;
+}
+
+/* ── Skill Cards ────────────────────────────────────────────────────────── */
+.sg-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.sg-skill-card {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: transform var(--transition-fast), box-shadow var(--transition-normal);
+}
+
+.sg-skill-card:hover,
+.sg-skill-card--hover {
+  transform: translateY(-2px);
+  box-shadow: var(--accent-glow-sm);
+}
+
+.sg-skill-card__top {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.sg-skill-card__icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--accent-violet);
+  border-radius: var(--radius-xs);
+}
+
+.sg-skill-card__info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.sg-skill-card__name {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.sg-skill-card__bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sg-skill-card__bar-track {
+  flex: 1;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.sg-skill-card__bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--accent-gradient);
+  box-shadow: 0 0 6px rgba(139, 92, 246, 0.4);
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sg-skill-card__bar-pct {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  min-width: 30px;
+  text-align: right;
+}
+
+.sg-skill-card__desc {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.sg-skill-card__btn {
+  align-self: flex-start;
+  font-size: 0.78rem;
+  padding: 0.45rem 0.85rem;
+}
+
+/* ── CTA ────────────────────────────────────────────────────────────────── */
+.sg-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 1.5rem 0;
+}
+
+.sg-cta__btn {
+  padding: 0.9rem 2.5rem;
+  font-size: 1rem;
+}
+
+.sg-cta__sub {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .sg-layout {
+    grid-template-columns: 1fr;
+  }
+  .sg-chart-card {
+    position: static;
+  }
+  .sg-cards {
+    max-height: none;
+  }
+}

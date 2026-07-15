@@ -1,0 +1,236 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Study Plan — Glassmorphism Design
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.study-plan {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 1100px;
+}
+
+.sp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.sp-header__title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.sp-header__subtitle {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-top: 0.2rem;
+}
+
+.sp-header__nav {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.sp-header__week {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  min-width: 60px;
+  text-align: center;
+}
+
+/* ── Layout ─────────────────────────────────────────────────────────────── */
+.sp-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ── Day Cards Grid ─────────────────────────────────────────────────────── */
+.sp-days {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.sp-day-card {
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  transition: transform var(--transition-fast), box-shadow var(--transition-normal);
+  cursor: default;
+}
+
+.sp-day-card:hover {
+  transform: translateY(-2px);
+}
+
+.sp-day-card--today {
+  box-shadow: var(--accent-glow);
+  border-color: rgba(139, 92, 246, 0.3);
+}
+
+.sp-day-card--done {
+  opacity: 0.85;
+}
+
+.sp-day-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.sp-day-card__label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.sp-day-card__title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.35;
+}
+
+/* Progress bar */
+.sp-day-card__progress-track {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: auto;
+}
+
+.sp-day-card__progress-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.2);
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sp-day-card__progress-fill--accent {
+  background: var(--accent-gradient);
+  box-shadow: 0 0 8px rgba(139, 92, 246, 0.4);
+}
+
+/* ── Today's Tasks ──────────────────────────────────────────────────────── */
+.sp-today {
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.sp-today__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sp-today__title {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.sp-today__count {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.sp-tasks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.sp-task {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.85rem 1rem;
+  transition: transform var(--transition-fast);
+}
+
+.sp-task:hover {
+  transform: translateX(3px);
+}
+
+.sp-task--done {
+  opacity: 0.7;
+}
+
+.sp-task__check {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--glass-border-highlight);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.sp-task__check--checked {
+  background: var(--accent-gradient);
+  border-color: transparent;
+  color: #fff;
+}
+
+.sp-task__label {
+  flex: 1;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.sp-task--done .sp-task__label {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.sp-task__status {
+  font-size: 0.75rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.sp-task__status--done {
+  color: var(--severity-low);
+}
+
+.sp-task__action {
+  padding: 0.4rem 0.85rem;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+
+/* Quick actions */
+.sp-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .sp-days {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  }
+  .sp-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

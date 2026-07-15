@@ -21,7 +21,12 @@ app.use(pinoHttp({
     }
 }))
 
-app.use(express.json())
+// Razorpay webhook signature is computed over the raw body, so the global JSON
+// parser must skip it — the webhook route mounts express.raw itself.
+app.use(function (req, res, next) {
+    if (req.originalUrl === "/api/payment/webhook") return next()
+    express.json()(req, res, next)
+})
 app.use(cookieParser())
 app.use(cors({
     origin: process.env.CLIENT_URL,
@@ -47,11 +52,17 @@ app.get("/health", function (req, res) {
 /* require all the routes here */
 const authRouter = require("./routes/auth.routes")
 const interviewRouter = require("./routes/interview.routes")
+const mockRouter = require("./routes/mock.routes")
+const dashboardRouter = require("./routes/dashboard.routes")
+const paymentRouter = require("./routes/payment.routes")
 
 
 /* using all the routes here */
 app.use("/api/auth", authRouter)
 app.use("/api/interview", interviewRouter)
+app.use("/api/mock", mockRouter)
+app.use("/api/dashboard", dashboardRouter)
+app.use("/api/payment", paymentRouter)
 
 
 /* 404 + centralized error handling, registered last */
