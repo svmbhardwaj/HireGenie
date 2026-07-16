@@ -8,7 +8,6 @@ import ResumeAnalysis from "./features/resume/pages/ResumeAnalysis";
 import InterviewPrep from "./features/interview/pages/InterviewPrep";
 import StudyPlan from "./features/studyplan/pages/StudyPlan";
 import SkillGaps from "./features/skillgaps/pages/SkillGaps";
-import DevPreview from "./pages/DevPreview";
 
 export const router = createBrowserRouter([
     {
@@ -18,10 +17,6 @@ export const router = createBrowserRouter([
     {
         path: "/register",
         element: <Register />
-    },
-    {
-        path: "/preview",
-        element: <DevPreview />
     },
     {
         path: "/",

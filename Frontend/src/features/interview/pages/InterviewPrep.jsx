@@ -70,11 +70,40 @@ const InterviewPrep = () => {
     const { report, loading, getResumePdf } = useInterview()
     const navigate = useNavigate()
 
-    if (loading || !report) {
+    if (loading) {
         return (
             <div className="loading-screen">
                 <div className="loading-spinner" />
                 <p className="loading-text">Loading interview prep...</p>
+            </div>
+        )
+    }
+
+    if (!report) {
+        return (
+            <div className="interview-prep animate-in">
+                <header className="ip-header">
+                    <div>
+                        <h1 className="ip-header__title">Interview Prep</h1>
+                        <p className="ip-header__subtitle">AI-curated questions, answers, and preparation roadmap</p>
+                    </div>
+                </header>
+                <div className="ip-empty glass" id="interview-empty-state">
+                    <div className="ip-empty__icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                        </svg>
+                    </div>
+                    <h2 className="ip-empty__title">No Interview Report Yet</h2>
+                    <p className="ip-empty__desc">Generate a report from the Resume Analysis page to unlock AI-curated interview questions, model answers, and a personalized preparation roadmap.</p>
+                    <button className="btn-accent" onClick={() => navigate('/resume-analysis')} id="go-to-resume-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                        </svg>
+                        Go to Resume Analysis
+                    </button>
+                </div>
             </div>
         )
     }
